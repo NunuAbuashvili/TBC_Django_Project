@@ -34,7 +34,7 @@ def list_products(request: HttpRequest) -> JsonResponse:
             'name': item.name,
             'price': item.price,
             'stock_quantity': item.stock_quantity,
-            'image_url': str(item.image),
+            'image_url': item.image.url if item.image.url else None,
             'time_of_creation': item.created_at,
             'time_of_update': item.updated_at,
             'active_status': item.is_active,
