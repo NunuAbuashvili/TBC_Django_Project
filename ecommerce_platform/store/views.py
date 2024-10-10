@@ -26,20 +26,22 @@ def list_products(request: HttpRequest) -> JsonResponse:
     @return: JSON containing product information.
     """
     products = Product.objects.all()
-    data = {}
+    data = []
 
-    for index, item in enumerate(products, start=1):
-        data[f'product {index}'] = {
+    for item in products:
+        data.append({
+            'id': item.id,
             'name': item.name,
             'price': item.price,
             'stock_quantity': item.stock_quantity,
+            'image_url': str(item.image),
             'time_of_creation': item.created_at,
             'time_of_update': item.updated_at,
             'active_status': item.is_active,
             'categories': [{'id': cat.id, 'name': cat.name} for cat in item.categories.all()],
-        }
+        })
 
-    return JsonResponse(data, json_dumps_params={'indent': 2})
+    return JsonResponse(data, safe=False, json_dumps_params={'indent': 2})
 
 
 def show_categories(request: HttpRequest) -> JsonResponse:
@@ -52,33 +54,20 @@ def show_categories(request: HttpRequest) -> JsonResponse:
     """
     categories = Category.objects.all()
 
-    def path_to_root_category(current_category: Category) -> Optional[Category]:
-        """
-        Find the top-level parent category for a given category.
+    data = []
 
-        @param current_category: The Category instance for which to find the top-level parent.
-        @return: The top-level parent category, or None if no parent exists.
-        """
-        if current_category.parent is None:
-            return None
-        parent = current_category.parent
-        while parent.parent is not None:
-            parent = parent.parent
-        return parent
-
-    data = {}
-
-    for index, category in enumerate(categories, start=1):
-        data[f'category {index}'] = {
+    for category in categories:
+        data.append({
+            'id': category.id,
             'name': category.name,
             'description': category.description,
             'time_of_creation': category.created_at,
             'time_of_update': category.updated_at,
             'active_status': category.is_active,
-            'top_level_parent': {
-                'id': path_to_root_category(category).id,
-                'name': path_to_root_category(category).name,
-            } if path_to_root_category(category) else 'None',
-        }
+            'parent_category': {
+                'id': category.parent.id,
+                'name': category.parent.name,
+            } if category.parent else None,
+        })
 
-    return JsonResponse(data, json_dumps_params={'indent': 2})
+    return JsonResponse(data, safe=False, json_dumps_params={'indent': 2})
