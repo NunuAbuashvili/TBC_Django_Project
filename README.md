@@ -26,7 +26,7 @@ The project consists of two main apps:
 - Views:
    - `store_homepage`: Displays a simple homepage message.
    - `list_products`: Returns JSON data for all products, including category info.
-   - `list_categories`: Returns JSON data for all categories, including top-level parent information.
+   - `list_categories`: Returns JSON data for all categories, including parent information.
 
 ### Order App
 - The Order app structure is set up, with plans for managing customer orders.
@@ -55,7 +55,7 @@ This project is a work in progress. Future updates will include enhanced functio
 
 ## API Endpoints
 - `/products/`: Returns a JSON list of products with category details.
-- `/categories/`: Returns a JSON list of categories, including each top-level parent category.
+- `/categories/`: Returns a JSON list of categories, including each parent category.
 
 ## Contributing
 This project is part of a learning process. While contributions are welcome, 

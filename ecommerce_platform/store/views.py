@@ -20,7 +20,7 @@ def store_homepage(request: HttpRequest) -> HttpResponse:
 def list_products(request: HttpRequest) -> JsonResponse:
     """
     Return a JSON response with a list of products and their details,
-    including categories, price, stock, creation, and update timestamps.
+    including id, categories, price, image URL, stock, creation, and update timestamps.
 
     @param request: The HTTP request object.
     @return: JSON containing product information.
@@ -47,7 +47,7 @@ def list_products(request: HttpRequest) -> JsonResponse:
 def show_categories(request: HttpRequest) -> JsonResponse:
     """
     Return a JSON response with a list of categories and their details,
-    including their top-level parent, description, and timestamps.
+    including their id, parent, description, and timestamps.
 
     @param request: The HTTP request object.
     @return: JSON containing category information.
