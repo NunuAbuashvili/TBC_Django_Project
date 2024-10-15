@@ -1,6 +1,7 @@
+from django.db.models.functions import Coalesce
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from django.db.models import Count, Sum, Max, Min, Avg, F, Prefetch
+from django.db.models import Count, Sum, Max, Min, Avg, F, Prefetch, Q, OuterRef, Subquery
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from .models import Product, Category
@@ -74,28 +75,45 @@ def list_categories(request: HttpRequest) -> JsonResponse:
 
 def categories_list_view(request: HttpRequest) -> HttpResponse:
     """
-    Renders a list of root categories.
+    Renders a list of root categories and the amount of their products.
 
     @param request: The HTTP request object.
-    @return: The HTTP response with the rendered list of root categories.
+    @return: The HTTP response with the rendered list of root categories and product amounts.
     """
-    root_categories = Category.objects.root_nodes().only('id', 'name')
-    # noinspection PyUnresolvedReferences
-    return render(request, "categories.html", {"categories": root_categories})
+    product_count_subquery = Product.objects.filter(
+        Q(categories=OuterRef('pk')) |
+        Q(categories__lft__gt=OuterRef('lft'),
+          categories__rght__lt=OuterRef('rght'),
+          categories__tree_id=OuterRef('tree_id'))
+    ).values('categories__tree_id').annotate(
+        product_count=Count('id', distinct=True)
+    ).values('product_count')
+
+    root_categories = Category.objects.root_nodes().annotate(
+        total_products=Coalesce(Subquery(product_count_subquery), 0)
+    )
+
+    categories_data = [{
+        'category': category,
+        'total_products': category.total_products,
+    } for category in root_categories]
+
+    return render(request, "categories.html", {'categories': categories_data})
 
 
-# noinspection PyArgumentList
 def category_detailed_view(request: HttpRequest, category_id: int) -> HttpResponse:
     """
     Renders the detailed view of a category, including products under the category tree,
-    and statistics, e.g. most expensive product, cheapest product, average price, total value of products
+    and statistics, e.g. most expensive product, cheapest product, average price,
+    and total value of products
 
     @param request: The HTTP request object.
     @param category_id: The ID of the category to retrieve.
     @return: The HTTP response with the rendered category details, products, and statistics.
     """
     category = get_object_or_404(Category, id=category_id)
-    products = Product.objects.filter(categories__in=category.get_descendants()).distinct().annotate(
+    products = Product.objects.filter(
+        categories__in=category.get_descendants()).distinct().annotate(
         total_value=F('price') * F('stock_quantity')
     )
 
@@ -117,7 +135,6 @@ def category_detailed_view(request: HttpRequest, category_id: int) -> HttpRespon
         'statistics': statistics,
     }
 
-    # noinspection PyUnresolvedReferences
     return render(request, 'category.html', context)
 
 
@@ -143,5 +160,5 @@ def product_detailed_view(request: HttpRequest, category_id: int, product_id: in
         'product_categories': product_categories,
         'category': category,
     }
-    # noinspection PyUnresolvedReferences
+
     return render(request, 'product.html', context)

@@ -60,7 +60,7 @@ This project is a work in progress. Future updates will include enhanced functio
 ## API Endpoints
 - `/products/`: Returns a JSON list of products with category details.
 - `/categories/`: Returns a JSON list of categories, including parent category information.
-- `/category/`: Returns a list of root categories.
+- `/category/`: Returns a list of root categories and the amount of products under their tree.
 - `/categories/{category_id}/products/`: Returns a detailed view of each category, including statistics and
 products under the root category tree.
 - `/categories/{category_id}/products/{product_id}`: Returns a detailed view of a product.
