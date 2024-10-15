@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+</head>
+<body>
+<div class="product">
+    {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% endif %}
+    <h3>{{ product.name }}</h3>
+    <p>Description: {{ product.description }}</p>
+    <p>Manufacturer: {{ product.manufacturer }}</p>
+    <p>Product price: {{ product.price }} GEL</p>
+    <p>Stock Quantity: {{ product.stock_quantity }}</p>
+    <p>Product category: {{ product_categories }}</p>
+    <p>Created at: {{ product.created_at }}</p>
+    <p>Updated at: {{ product.updated_at }}</p>
+    <p>Accessibility: {{ product.is_active }}</p>
+    <p>
+        <a href="{% url 'category_products' category.id %}">
+            Back to {{ category.name }}</a>
+    </p>
+
+</div>
+</body>
+</html>

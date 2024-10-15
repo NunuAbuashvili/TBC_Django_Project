@@ -1,7 +1,6 @@
-from typing import Optional
-from itertools import product
-
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator
+from django.db.models import Count, Sum, Max, Min, Avg, F, Prefetch
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from .models import Product, Category
@@ -44,7 +43,7 @@ def list_products(request: HttpRequest) -> JsonResponse:
     return JsonResponse(data, safe=False, json_dumps_params={'indent': 2})
 
 
-def show_categories(request: HttpRequest) -> JsonResponse:
+def list_categories(request: HttpRequest) -> JsonResponse:
     """
     Return a JSON response with a list of categories and their details,
     including their id, parent, description, and timestamps.
@@ -71,3 +70,78 @@ def show_categories(request: HttpRequest) -> JsonResponse:
         })
 
     return JsonResponse(data, safe=False, json_dumps_params={'indent': 2})
+
+
+def categories_list_view(request: HttpRequest) -> HttpResponse:
+    """
+    Renders a list of root categories.
+
+    @param request: The HTTP request object.
+    @return: The HTTP response with the rendered list of root categories.
+    """
+    root_categories = Category.objects.root_nodes().only('id', 'name')
+    # noinspection PyUnresolvedReferences
+    return render(request, "categories.html", {"categories": root_categories})
+
+
+# noinspection PyArgumentList
+def category_detailed_view(request: HttpRequest, category_id: int) -> HttpResponse:
+    """
+    Renders the detailed view of a category, including products under the category tree,
+    and statistics, e.g. most expensive product, cheapest product, average price, total value of products
+
+    @param request: The HTTP request object.
+    @param category_id: The ID of the category to retrieve.
+    @return: The HTTP response with the rendered category details, products, and statistics.
+    """
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(categories__in=category.get_descendants()).distinct().annotate(
+        total_value=F('price') * F('stock_quantity')
+    )
+
+    paginator = Paginator(products, 3)
+    page_number = request.GET.get('page')
+    page_object = paginator.get_page(page_number)
+
+    statistics = products.aggregate(
+        category_total_value=Sum(F('price') * F('stock_quantity')),
+        max_price=Max('price'),
+        min_price=Min('price'),
+        avg_price=Avg('price'),
+        total_products=Count('id'),
+    )
+
+    context = {
+        'category': category,
+        'page_object': page_object,
+        'statistics': statistics,
+    }
+
+    # noinspection PyUnresolvedReferences
+    return render(request, 'category.html', context)
+
+
+def product_detailed_view(request: HttpRequest, category_id: int, product_id: int) -> HttpResponse:
+    """
+    Renders the detailed view of a product.
+
+    @param request: The HTTP request object.
+    @param category_id: The ID of the root category associated with the product.
+    @param product_id: The ID of the product to retrieve.
+    @return: The HTTP response with the rendered product details.
+    """
+    category = get_object_or_404(Category.objects.only('id', 'name'), id=category_id)
+    product = get_object_or_404(
+        Product.objects.prefetch_related(
+            Prefetch('categories', queryset=Category.objects.only('name')),
+        ),
+        id=product_id
+    )
+    product_categories = ', '.join(category.name for category in product.categories.all())
+    context = {
+        'product': product,
+        'product_categories': product_categories,
+        'category': category,
+    }
+    # noinspection PyUnresolvedReferences
+    return render(request, 'product.html', context)

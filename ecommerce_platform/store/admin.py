@@ -1,3 +1,5 @@
+from mptt.admin import DraggableMPTTAdmin
+
 from django.contrib import admin
 from .models import Product, Category
 

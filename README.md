@@ -27,6 +27,10 @@ The project consists of two main apps:
    - `store_homepage`: Displays a simple homepage message.
    - `list_products`: Returns JSON data for all products, including category info.
    - `list_categories`: Returns JSON data for all categories, including parent information.
+   - `categories_list_view`: Renders a lit of root categories on a `categories.html` page.
+   - `category_detailed_view`: Displays details of a selected category, along with statistics and paginated products. 
+Rendered on `category.html`.
+   - `product_detailed_view`: Displays details of a selected product, shown on `product.html`.
 
 ### Order App
 - The Order app structure is set up, with plans for managing customer orders.
@@ -55,7 +59,11 @@ This project is a work in progress. Future updates will include enhanced functio
 
 ## API Endpoints
 - `/products/`: Returns a JSON list of products with category details.
-- `/categories/`: Returns a JSON list of categories, including each parent category.
+- `/categories/`: Returns a JSON list of categories, including parent category information.
+- `/category/`: Returns a list of root categories.
+- `/categories/{category_id}/products/`: Returns a detailed view of each category, including statistics and
+products under the root category tree.
+- `/categories/{category_id}/products/{product_id}`: Returns a detailed view of a product.
 
 ## Contributing
 This project is part of a learning process. While contributions are welcome, 
@@ -66,4 +74,4 @@ please note that major changes may be implemented as part of the learning journe
 This README is in its initial state and will be updated regularly as the project evolves. 
 Check back for the latest information on features and usage.
 
-*Last updated: [10.10.2024]*
+*Last updated: [15.10.2024]*

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category.name }}</title>
+</head>
+<body>
+<h1> {{ category.name }}</h1>
+<p>Total products: {{ statistics.total_products }}</p>
+<p>Total value: {{ statistics.total_category_value|floatformat:2 }} GEL</p>
+<p>Most expensive product: {{ statistics.max_price|floatformat:2 }} GEL</p>
+<p>Cheapest product: {{ statistics.min_price|floatformat:2 }} GEL</p>
+<p>Average product price: {{ statistics.avg_price|floatformat:2 }} GEL</p>
+
+<h2>Products</h2>
+<ul>
+    {% for product in page_object %}
+        <li>
+            <a href="{% url 'product_page' category.id product.id %}">
+                {{ product.name }} - Total Value: {{ product.total_value|floatformat:2 }} GEL</a>
+        </li>
+    {% endfor %}
+</ul>
+
+{% if page_object.has_other_pages %}
+<nav>
+    <ul class="pagination">
+        {% if page_object.has_previous %}
+            <li><a href="?page={{ page_object.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in page_object.paginator.page_range %}
+            {% if page_object.number == i %}
+                <li class="active"><span>{{ i }}</span></li>
+            {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if page_object.has_next %}
+            <li><a href="?page={{ page_object.next_page_number }}">&raquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<p>
+    <a href="{% url 'categories_list' %}">Back to main categories</a>
+</p>
+</body>
+</html>
