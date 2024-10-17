@@ -3,26 +3,42 @@
 ## Overview
 This is a basic Django-based e-commerce project designed for managing products
 and orders in a store. It includes a **Store** app for handling products and categories,
-and an **Order** app for managing customer orders. This project is currently in its initial stage 
-and will be expanded over time with more features.
+a **User** app for comprehensive user management, and an **Order** app for managing customer orders. 
+This project is currently in its initial stage and will be expanded over time with more features.
 
 
 ## Project Structure
-The project consists of two main apps:
+The project consists of three main apps:
 
 - **Store App**: Manages products, categories, and associated functionality.
+- **User App**: Handles custom user management with extended profile features.
 - **Order App**: Manages customer orders and the ordering process.
 
 
 ## Current Features
 
-### Store app
+### User App
+- Custom User Model with Extended Profile:
+  - Comprehensive user information including contact details and address.
+  - Account type differentiation (individual/company).
+  - Marketing preferences management.
+- Advanced Admin Configuration:
+  - Customized user management interface.
+  - Organized fieldsets for better data management.
+  - Search and filtering capabilities.
+  - Full address display functionality.
+
+### Store App
 - Product and Category Models:
   - Products can belong to multiple categories.
   - Categories are organized hierarchically, allowing for nested subcategories.
   - Each product has a name, price, stock quantity, and an optional image.
-- Admin Panel Configuration:
-   - Categories and products are manageable via the Django admin interface, including hierarchical category management.
+- Advanced Admin Panel Configuration:
+   - Advanced category and product management.
+   - Product value calculations and statistics.
+   - Cached category hierarchy information.
+   - Enhanced search and filtering options.
+   - Custom display for product counts and category trees.
 - Views:
    - `store_homepage`: Displays a simple homepage message.
    - `list_products`: Returns JSON data for all products, including category info.
@@ -74,4 +90,4 @@ please note that major changes may be implemented as part of the learning journe
 This README is in its initial state and will be updated regularly as the project evolves. 
 Check back for the latest information on features and usage.
 
-*Last updated: [15.10.2024]*
+*Last updated: [17.10.2024]*

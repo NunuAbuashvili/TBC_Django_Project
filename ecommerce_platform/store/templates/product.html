@@ -20,7 +20,7 @@
     <p>Updated at: {{ product.updated_at }}</p>
     <p>Accessibility: {{ product.is_active }}</p>
     <p>
-        <a href="{% url 'category_products' category.id %}">
+        <a href="{% url 'store:category_products' category.id %}">
             Back to {{ category.name }}</a>
     </p>
 

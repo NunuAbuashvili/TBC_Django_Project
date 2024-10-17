@@ -17,7 +17,7 @@
 <ul>
     {% for product in page_object %}
         <li>
-            <a href="{% url 'product_page' category.id product.id %}">
+            <a href="{% url 'store:product_page' category.id product.id %}">
                 {{ product.name }} - Total Value: {{ product.total_value|floatformat:2 }} GEL</a>
         </li>
     {% endfor %}
@@ -48,7 +48,7 @@
 {% endif %}
 
 <p>
-    <a href="{% url 'categories_list' %}">Back to main categories</a>
+    <a href="{% url 'store:categories_list' %}">Back to main categories</a>
 </p>
 </body>
 </html>

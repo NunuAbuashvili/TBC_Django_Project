@@ -10,8 +10,8 @@
 <ul>
      {% for item in categories %}
         <li>
-            <a href="{% url 'category_products' item.category.id %}">
-                {{ item.category.name }} - {{ item.category.total_products }} products
+            <a href="{% url 'store:category_products' item.category.id %}">
+                {{ item.category.name }} - {{ item.total_products }} products
             </a>
         </li>
     {% endfor %}
